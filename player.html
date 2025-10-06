@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player HP Bar</title>
+<style>
+body { margin:0; background: transparent; font-family: sans-serif; }
+#container { width: 400px; max-width: 90%; padding:10px; }
+#hp-bar-bg { width: 100%; height: 25px; background: rgba(255,0,0,0.3); border-radius: 12px; overflow: hidden; box-shadow: 0 0 5px rgba(0,0,0,0.3); position: relative; }
+#hp-bar-fill { height:100%; width:100%; background: linear-gradient(90deg, #E53935 0%, #FF6F61 100%); position: absolute; left:0; top:0; transition: width 0.3s; border-radius: 12px; }
+#hp-text { text-align:center; margin-top:5px; font-weight:bold; color:#ffffff; text-shadow: 0 0 5px rgba(0,0,0,0.7); }
+button { margin:2px; padding:5px 10px; font-size:14px; border-radius:5px; border:none; cursor:pointer; }
+</style>
+</head>
+<body>
+<div id="container">
+  <div id="hp-bar-bg">
+    <div id="hp-bar-fill"></div>
+  </div>
+  <div id="hp-text">HP</div>
+  <input type="number" id="hp-input" style="width:60px;" /> / 
+  <input type="number" id="maxhp-input" style="width:60px;" />
+  <div>
+    <button onclick="changeHP(10)">+10</button>
+    <button onclick="changeHP(-10)">-10</button>
+  </div>
+</div>
+
+<script>
+let urlParams = new URLSearchParams(window.location.search);
+let hp = parseInt(urlParams.get('hp')) || 100;
+let maxHP = parseInt(urlParams.get('max')) || 100;
+
+const hpFill = document.getElementById('hp-bar-fill');
+const hpText = document.getElementById('hp-text');
+const hpInput = document.getElementById('hp-input');
+const maxHPInput = document.getElementById('maxhp-input');
+
+function updateBar() {
+  hpFill.style.width = Math.max(0, Math.min(100, (hp/maxHP)*100)) + '%';
+  hpText.textContent = hp + ' / ' + maxHP;
+  hpInput.value = hp;
+  maxHPInput.value = maxHP;
+}
+
+function changeHP(amount) {
+  hp += amount;
+  if(hp > maxHP) hp = maxHP;
+  if(hp < 0) hp = 0;
+  updateBar();
+}
+
+hpInput.addEventListener('change', ()=> { hp = parseInt(hpInput.value) || hp; updateBar(); });
+maxHPInput.addEventListener('change', ()=> { maxHP = parseInt(maxHPInput.value) || maxHP; if(hp>maxHP) hp=maxHP; updateBar(); });
+
+updateBar();
+</script>
+</body>
+</html>
